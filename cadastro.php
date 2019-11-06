@@ -96,7 +96,7 @@
 						data: {nome:$("input[name='nome']").val(), 
 								email:$("input[name='email']").val(), 
 								sexo:$("input[name='sexo']:checked").val(), 								
-								cod_cidade:$("input[name='cod_cidade']").val(),
+								cod_cidade:$("select[name='cod_cidade']").val(),
 								salario:$("input[name='salario']").val()},
 						success: function(data){
 							if(data==1){
@@ -162,6 +162,46 @@
 					});
 				});
 				
+				//CIDADE
+				
+				$(document).on("click",".cidade",function(){
+					td = $(this);
+					nome = td.html();
+					
+					select = "<select id='cidade_alterar'>";
+					select += $("select[name='cod_cidade']").html();
+					select += "</select>";
+					
+					td.html(select);
+					valor = $("option:contains('"+cidade+"')").val();
+					$("#cod_cidade").val(valor);
+					$("#cod_cidade").focus();
+					td.attr("class", "cidade_alterar");					
+				});
+				
+				$(document).on("blur",".cidade_alterar",function(){
+					td = $(this);
+					id_linha = $(this).closest("tr").find("button").val();
+					$.ajax({
+						url: "altera_inline.php",
+						type: "post",
+						data: {coluna: 'cod_cidade', valor: $("#cidade_alterar").val(),
+						id: id_linha},
+						success: function(r){
+						cod_cidade = $("#cidade_alterar").val();
+						cidade_estado = $("#cidade_alterar").find(
+								"option[value='"+cod_cidade+"']").html();
+								cidade_estado = cidade_estado.split("|");
+								cidade = cidade_estado[0];
+								estado = cidade_estado[1];
+								td.closest("tr").find(".estado").html(estado);
+								td.html(cidade);
+								td.attr("class","cidade");
+							)
+						}
+					});
+				}
+				
 				//email
 				$(document).on("click",".email",function(){
 					td = $(this);
@@ -182,6 +222,69 @@
 							email = $("#email").val();
 							td.html(email);
 							td.attr("class","email");
+						}
+					});
+				});
+				
+				//sexo
+				$(document).on("click",".sexo",function(){
+					td = $(this);
+					sexo = td.html();
+					sexo_input = "<>"
+								
+				
+				//salario
+				$(document).on("click",".salario",function(){
+					td = $(this);
+					salario = td.html();
+					td.html("<input type = 'text' id = 'salario' value = '" + salario + "' />");
+					td.attr("class","salario_alterar");
+					$("#salario").focus();
+				});
+				
+				$(document).on("blur",".salario_alterar",function(){
+					td = $(this);
+					id_linha = $(this).closest("tr").find("button").val();
+					$.ajax({
+						url: "altera_inline.php",
+						type: "post",
+						data: {coluna: 'salario', valor: $("#salario").val(), id: id_linha, tabela: "cadastro"},
+						success: function(){
+							salario = $("#salario").val();
+							td.html(salario);
+							td.attr("class","salario");
+						}
+					});
+				});
+				
+				//sexo
+				$(document).on("click",".sexo",function(){
+					td = $(this);
+					sexo = td.html();
+					sexo_input = "";//incompleto
+					sexo_input += "";//incompleto
+					td.html(sexo_input);
+					if(sexo=='M'){
+						$(".alterar_sexo[value='M']").prop("checked", true);
+						$(".alterar_sexo[value='F']").prop("checked", false);
+					}else{
+						$(".alterar_sexo[value='F']").prop("checked", false);
+						$(".alterar_sexo[value='M']").prop("checked", true);						
+					}
+					td.attr("class","sexo_alterar");
+				});
+				
+				$(document).on("blur",".sexo_alterar",function(){
+					td = $(this);
+					id_linha = $(this).closest("tr").find("button").val();
+					$.ajax({
+						url: "altera_inline.php",
+						type: "post",
+						data: {coluna: 'sexo', valor: $(".alterar_sexo:checked").val(), id: id_linha},
+						success: function(){
+							sexo = $(".alterar_sexo").val();
+							td.html(sexo);
+							td.attr("class","sexo");
 						}
 					});
 				});
@@ -278,7 +381,7 @@
 					<th>Nome</th>
 					<th>E-mail</th>
 					<th>Sexo</th>
-					<th>Cod_Cidade</th>
+					<th>Código da Cidade</th>
 					<th>Salário</th>
 					<th>Ação</th>
 				</tr>

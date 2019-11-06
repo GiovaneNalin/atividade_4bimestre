@@ -2,15 +2,12 @@
 	
 	include("conexao.php");
 	
-	$id = $_POST["id"];
 	$nome = $_POST["nome"];
-	$email = $_POST["email"];
-	$sexo = $_POST["sexo"];
+	$cod_estado = $_POST["cod_estado"];
 	
 	$alteracao = "UPDATE cadastro SET 
 				nome = '$nome',
-				email = '$email',
-				sexo = '$sexo'
+				cod_estado = '$cod_estado'
 				WHERE id_cadastro = '$id'";
 
 	mysqli_query($conexao,$alteracao)
